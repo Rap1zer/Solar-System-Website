@@ -12,19 +12,23 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-//const gridHelper = new THREE.GridHelper(200, 50);
-//scene.add(gridHelper);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+scene.add(directionalLight);
+directionalLight.position.set(10, 10, 10);
+directionalLight.target.position.set(0, 0, 0); // Set target position
+
+const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+scene.add(lightHelper);
+// const gridHelper = new THREE.GridHelper(200, 50);
+// scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-const cubesphereGenerator = new CubeSphereGenerator(10, 2);
+const cubesphereGenerator = new CubeSphereGenerator(10, 6);
 // cubesphereGenerator.parent.children.forEach((child) => {
 //   scene.add(child);
 // });
 scene.add(cubesphereGenerator.parent);
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-scene.add(directionalLight);
 
 camera.position.setZ(20);
 
