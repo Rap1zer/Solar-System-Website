@@ -2,7 +2,6 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import CubeSphereGenerator from "./cubesphereGenerator";
-import EquirectangularToCubemap from "./equirectangularToCubemap";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,7 +14,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 scene.add(directionalLight);
-directionalLight.position.set(10, 10, 10);
+directionalLight.position.set(10, 15, 12);
 directionalLight.target.position.set(0, 0, 0); // Set target position
 
 const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
@@ -26,12 +25,12 @@ scene.add(lightHelper);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
 
-const cubesphereGenerator = new CubeSphereGenerator(1, 6);
+const cubesphereGenerator = new CubeSphereGenerator(10, 6);
 
 const loader = new THREE.TextureLoader();
 cubesphereGenerator.parent.children.forEach((child, index) => {
   if (child instanceof THREE.Mesh) {
-    loader.load(`./textures/cubeFaces/${index}.png`, (texture) => {
+    loader.load(`./textures/surface map/${index}.png`, (texture) => {
       const cubeFaceMat = new THREE.MeshStandardMaterial({
         map: texture,
       });
