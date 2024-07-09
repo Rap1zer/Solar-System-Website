@@ -23,29 +23,19 @@ class CubeSphereGenerator {
     this.resolution = resolution;
 
     for (let i = 0; i < 6; i++) {
-      const mesh = this.parent.children[i].getObjectByName("Mesh").geometry;
+      const mesh = this.parent.children[i].geometry;
       this.updateFace(mesh, this.directions[i]);
     }
   }
 
   generateCubesphere() {
-    const meshes = [];
-    const materials = [];
-
     for (let i = 0; i < 6; i++) {
       const geometry = new THREE.BufferGeometry();
-      const material = new THREE.MeshStandardMaterial({ color: 0xffa500 });
+      const material = new THREE.MeshStandardMaterial({ color: 0x9370db });
 
       const mesh = new THREE.Mesh(geometry, material);
       mesh.name = "Mesh";
-
-      const child = new THREE.Object3D();
-      child.add(mesh);
-
-      this.parent.add(child);
-
-      meshes.push(geometry);
-      materials.push(material);
+      this.parent.add(mesh);
 
       this.updateFace(geometry, this.directions[i]);
     }
@@ -53,31 +43,15 @@ class CubeSphereGenerator {
 
   updateFace(geometry, direction) {
     const verticesPerRow = Math.pow(2, this.resolution) + 1;
-    const vertices = this.getSphereVertices(
-      verticesPerRow,
-      this.size,
-      direction
-    );
+    const vertices = this.getSphereVertices(verticesPerRow, this.size, direction);
     const triangles = this.getTriangles(verticesPerRow);
     const uvs = this.calculateUVs(verticesPerRow);
 
-    //console.log(vertices);
-    const positions = [];
-    for (const vertex of vertices) {
-      positions.push(vertex.x, vertex.y, vertex.z);
-    }
-    console.log(positions);
-    console.log(new Float32Array(positions));
+    const { float32Pos, float32Uvs } = flattenVerticesAndUVs(vertices, uvs);
 
-    geometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(new Float32Array(positions), 3)
-    );
+    geometry.setAttribute("position", new THREE.BufferAttribute(float32Pos, 3));
     geometry.setIndex(triangles);
-    geometry.setAttribute(
-      "uv",
-      new THREE.BufferAttribute(new Float32Array(uvs.flat()), 2)
-    );
+    geometry.setAttribute("uv", new THREE.BufferAttribute(float32Uvs, 2));
 
     geometry.computeVertexNormals();
   }
@@ -99,8 +73,7 @@ class CubeSphereGenerator {
           .addScaledVector(dx, (xVertexPercent - 0.5) * 2)
           .addScaledVector(dy, (yVertexPercent - 0.5) * 2);
 
-        const vertex =
-          CubeSphereGenerator.cubeToSphere(pointOnCube).multiplyScalar(size);
+        const vertex = CubeSphereGenerator.cubeToSphere(pointOnCube).multiplyScalar(size);
 
         vertices.push(vertex);
       }
@@ -114,9 +87,7 @@ class CubeSphereGenerator {
 
     for (let i = 0; i < verticesPerRow; i++) {
       for (let j = 0; j < verticesPerRow; j++) {
-        uvs.push(
-          new THREE.Vector2(i / (verticesPerRow - 1), j / (verticesPerRow - 1))
-        );
+        uvs.push(new THREE.Vector2(i / (verticesPerRow - 1), j / (verticesPerRow - 1)));
       }
     }
 
@@ -139,11 +110,7 @@ class CubeSphereGenerator {
     const triangles = [];
     const vertexCount = verticesPerRow * verticesPerRow;
 
-    for (
-      let i = 0, triangleCounter = 0;
-      triangleCounter < vertexCount - verticesPerRow;
-      i += 6
-    ) {
+    for (let i = 0, triangleCounter = 0; triangleCounter < vertexCount - verticesPerRow; i += 6) {
       if (i !== 0 && (i / 6 + 1) % verticesPerRow === 0) {
         triangleCounter++;
         continue;
@@ -163,6 +130,25 @@ class CubeSphereGenerator {
 
     return triangles;
   }
+}
+
+function flattenVerticesAndUVs(vertices, uvs) {
+  const float32Pos = new Float32Array(vertices.length * 3);
+  for (let i = 0; i < vertices.length; i++) {
+    let posIndex = i * 3;
+    float32Pos[posIndex] = vertices[i].x;
+    float32Pos[posIndex + 1] = vertices[i].y;
+    float32Pos[posIndex + 2] = vertices[i].z;
+  }
+
+  const float32Uvs = new Float32Array(uvs.length * 2);
+  for (let i = 0; i < uvs.length; i++) {
+    let uvIndex = i * 2;
+    float32Uvs[uvIndex] = uvs[i].x;
+    float32Uvs[uvIndex + 1] = uvs[i].y;
+  }
+
+  return { float32Pos, float32Uvs };
 }
 
 export default CubeSphereGenerator;
