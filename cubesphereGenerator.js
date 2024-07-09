@@ -1,10 +1,13 @@
 import * as THREE from "three";
+import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 
 class CubeSphereGenerator {
+  //geometries = new Array(6);
+
   constructor(size = 5, resolution = 1) {
     this.size = size;
     this.resolution = resolution;
-    this.parent = new THREE.Object3D();
+    this.parent = new THREE.Mesh();
 
     this.directions = [
       new THREE.Vector3(0, 1, 0), // +Y
@@ -16,6 +19,7 @@ class CubeSphereGenerator {
     ];
 
     this.generateCubesphere();
+    //this.parent.geometry = BufferGeometryUtils.mergeGeometries(this.geometries);
   }
 
   updateSphereMesh(size, resolution) {
@@ -36,6 +40,8 @@ class CubeSphereGenerator {
       const mesh = new THREE.Mesh(geometry, material);
       mesh.name = "Mesh";
       this.parent.add(mesh);
+
+      //this.geometries[i] = geometry;
 
       this.updateFace(geometry, this.directions[i]);
     }

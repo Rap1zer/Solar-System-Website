@@ -25,17 +25,20 @@ directionalLight.target.position.set(0, 0, 0); // Set target position
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
 
-const cubesphereGenerator = new CubeSphereGenerator(10, 6);
+const cubesphereGenerator = new CubeSphereGenerator(10, 7);
 
 const loader = new THREE.TextureLoader();
 cubesphereGenerator.parent.children.forEach((child, index) => {
   if (child instanceof THREE.Mesh) {
     const surfaceMat = loader.load(`./textures/surface map/${index}.png`);
     const normalMat = loader.load(`./textures/normal map/${index}.png`);
+    const displacementMap = loader.load(`./textures/displacement map/${index}.png`);
     child.material = new THREE.MeshStandardMaterial({
       map: surfaceMat,
       normalMap: normalMat,
       normalScale: new THREE.Vector2(2, 2),
+      displacementMap: displacementMap,
+      displacementScale: 0.1,
     });
   }
 });
