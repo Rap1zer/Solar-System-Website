@@ -2,6 +2,7 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import CubeSphereGenerator from "./cubesphereGenerator";
+import EquirectangularToCubemap from "./equirectangularToCubemap";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -23,11 +24,22 @@ scene.add(lightHelper);
 // scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.enablePan = false;
 
-const cubesphereGenerator = new CubeSphereGenerator(10, 6);
-// cubesphereGenerator.parent.children.forEach((child) => {
-//   scene.add(child);
-// });
+const cubesphereGenerator = new CubeSphereGenerator(1, 6);
+
+const loader = new THREE.TextureLoader();
+cubesphereGenerator.parent.children.forEach((child, index) => {
+  if (child instanceof THREE.Mesh) {
+    loader.load(`./textures/cubeFaces/${index}.png`, (texture) => {
+      const cubeFaceMat = new THREE.MeshStandardMaterial({
+        map: texture,
+      });
+      child.material = cubeFaceMat;
+    });
+  }
+});
+
 scene.add(cubesphereGenerator.parent);
 
 camera.position.setZ(20);

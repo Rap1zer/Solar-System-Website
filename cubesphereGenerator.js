@@ -31,7 +31,7 @@ class CubeSphereGenerator {
   generateCubesphere() {
     for (let i = 0; i < 6; i++) {
       const geometry = new THREE.BufferGeometry();
-      const material = new THREE.MeshStandardMaterial({ color: 0x9370db });
+      const material = new THREE.MeshStandardMaterial({ color: 0xd68c59 });
 
       const mesh = new THREE.Mesh(geometry, material);
       mesh.name = "Mesh";
