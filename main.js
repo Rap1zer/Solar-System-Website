@@ -17,42 +17,41 @@ scene.add(directionalLight);
 directionalLight.position.set(10, 15, 12);
 directionalLight.target.position.set(0, 0, 0); // Set target position
 
-const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-scene.add(lightHelper);
+// const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+// scene.add(lightHelper);
 // const gridHelper = new THREE.GridHelper(200, 50);
 // scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
 
-const cubesphere = new Cubesphere(300).getGeometry();
+const cubesphere = new Cubesphere(20).getGeometry();
 const loader = new THREE.TextureLoader();
 const materials = new Array(6);
 for (let i = 0; i < 6; i++) {
+  const diffuseTexture = setTexture("DiffuseMap", loader, i);
+  const normalTexture = setTexture("NormalMap", loader, i);
+  const displacementTexture = setTexture("DisplacementMap", loader, i);
   materials[i] = new THREE.MeshStandardMaterial({
-    map: loader.load(`./textures/DiffuseMap/${i}.png`),
-    normalMap: loader.load(`./textures/NormalMap/${i}.png`),
+    map: diffuseTexture,
+    normalMap: normalTexture,
     normalScale: new THREE.Vector2(2, 2),
-    displacementMap: loader.load(`./textures/DisplacementMap/${i}.png`),
+    displacementMap: displacementTexture,
     displacementScale: 0.3,
   });
 }
+
+function setTexture(folderName, loader, i) {
+  const texture = loader.load(`./textures/${folderName}/${i}.png`);
+  texture.magFilter = THREE.NearestFilter;
+  texture.minFilter = THREE.NearestFilter;
+  return texture;
+}
+
 const planet = new THREE.Mesh(cubesphere, materials);
 
-// cubesphereGenerator.parent.children.forEach((child, index) => {
-//   if (child instanceof THREE.Mesh) {
-//     const surfaceMat = loader.load(`./textures/surface map/${index}.png`);
-//     const normalMat = loader.load(`./textures/normal map/${index}.png`);
-//     const displacementMap = loader.load(`./textures/displacement map/${index}.png`);
-//     child.material = new THREE.MeshStandardMaterial({
-//       map: surfaceMat,
-//       normalMap: normalMat,
-//       normalScale: new THREE.Vector2(2, 2),
-//       displacementMap: displacementMap,
-//       displacementScale: 0.1,
-//     });
-//   }
-// });
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
 scene.add(planet);
 
@@ -60,9 +59,7 @@ camera.position.setZ(20);
 
 function animate() {
   requestAnimationFrame(animate);
-
   controls.update();
-
   renderer.render(scene, camera);
 }
 
