@@ -1,7 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import CubeSphereGenerator from "./cubesphereGenerator";
+import Cubesphere from "./cubesphere";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -25,25 +25,26 @@ directionalLight.target.position.set(0, 0, 0); // Set target position
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
 
-const cubesphereGenerator = new CubeSphereGenerator(10, 7);
+const cubesphere = new Cubesphere(300).getGeometry();
+const planet = new THREE.Mesh(cubesphere, new THREE.MeshStandardMaterial({ color: 0xd68c59 }));
 
-const loader = new THREE.TextureLoader();
-cubesphereGenerator.parent.children.forEach((child, index) => {
-  if (child instanceof THREE.Mesh) {
-    const surfaceMat = loader.load(`./textures/surface map/${index}.png`);
-    const normalMat = loader.load(`./textures/normal map/${index}.png`);
-    const displacementMap = loader.load(`./textures/displacement map/${index}.png`);
-    child.material = new THREE.MeshStandardMaterial({
-      map: surfaceMat,
-      normalMap: normalMat,
-      normalScale: new THREE.Vector2(2, 2),
-      displacementMap: displacementMap,
-      displacementScale: 0.1,
-    });
-  }
-});
+// const loader = new THREE.TextureLoader();
+// cubesphereGenerator.parent.children.forEach((child, index) => {
+//   if (child instanceof THREE.Mesh) {
+//     const surfaceMat = loader.load(`./textures/surface map/${index}.png`);
+//     const normalMat = loader.load(`./textures/normal map/${index}.png`);
+//     const displacementMap = loader.load(`./textures/displacement map/${index}.png`);
+//     child.material = new THREE.MeshStandardMaterial({
+//       map: surfaceMat,
+//       normalMap: normalMat,
+//       normalScale: new THREE.Vector2(2, 2),
+//       displacementMap: displacementMap,
+//       displacementScale: 0.1,
+//     });
+//   }
+// });
 
-scene.add(cubesphereGenerator.parent);
+scene.add(planet);
 
 camera.position.setZ(20);
 
