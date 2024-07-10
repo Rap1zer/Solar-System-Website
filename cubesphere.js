@@ -34,6 +34,18 @@ class Cubesphere {
     }
   }
 
+  // calculateUVs() {
+  //   const verticesPerRow = this.resolution;
+  //   const uvAttribute = this.geometry.attributes.uv;
+  //   for (let i = 0; i < verticesPerRow; i++) {
+  //     for (let j = 0; j < verticesPerRow; j++) {
+  //       index = (i * verticesPerRow + j) * 2;
+  //       uvAttribute.setX(index, i / (verticesPerRow - 1));
+  //       uvAttribute.setY(index + 1, j / (verticesPerRow - 1));
+  //     }
+  //   }
+  // }
+
   // Update normals of the geometry
   updateNormals() {
     const normalAttribute = this.geometry.attributes.normal;
@@ -52,7 +64,6 @@ class Cubesphere {
     const x2 = p.x * p.x;
     const y2 = p.y * p.y;
     const z2 = p.z * p.z;
-
     const x = p.x * Math.sqrt(1 - (y2 + z2) / 2 + (y2 * z2) / 3);
     const y = p.y * Math.sqrt(1 - (z2 + x2) / 2 + (z2 * x2) / 3);
     const z = p.z * Math.sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
