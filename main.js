@@ -31,6 +31,10 @@ const materials = new Array(6);
 for (let i = 0; i < 6; i++) {
   materials[i] = new THREE.MeshStandardMaterial({
     map: loader.load(`./textures/DiffuseMap/${i}.png`),
+    normalMap: loader.load(`./textures/NormalMap/${i}.png`),
+    normalScale: new THREE.Vector2(2, 2),
+    displacementMap: loader.load(`./textures/DisplacementMap/${i}.png`),
+    displacementScale: 0.3,
   });
 }
 const planet = new THREE.Mesh(cubesphere, materials);
