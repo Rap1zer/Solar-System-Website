@@ -1,4 +1,3 @@
-import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Cubesphere from "./cubesphere";
@@ -15,12 +14,12 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 scene.add(directionalLight);
 directionalLight.position.set(10, 15, 12);
-directionalLight.target.position.set(0, 0, 0); // Set target position
+directionalLight.target.position.set(0, 0, 0);
 
-// const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-// scene.add(lightHelper);
-// const gridHelper = new THREE.GridHelper(200, 50);
-// scene.add(gridHelper);
+const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+scene.add(lightHelper);
+const gridHelper = new THREE.GridHelper(200, 50);
+scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
@@ -42,7 +41,7 @@ for (let i = 0; i < 6; i++) {
 }
 
 function setTexture(folderName, loader, i) {
-  const texture = loader.load(`./textures/${folderName}/${i}.png`);
+  const texture = loader.load(`/textures/${folderName}/${i}.png`);
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
   return texture;
@@ -52,7 +51,7 @@ const planet = new THREE.Mesh(cubesphere, materials);
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-
+console.log(planet);
 scene.add(planet);
 
 camera.position.setZ(20);
