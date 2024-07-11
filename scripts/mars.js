@@ -16,10 +16,10 @@ scene.add(directionalLight);
 directionalLight.position.set(10, 15, 12);
 directionalLight.target.position.set(0, 0, 0);
 
-const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-scene.add(lightHelper);
-const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(gridHelper);
+// const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+// scene.add(lightHelper);
+// const gridHelper = new THREE.GridHelper(200, 50);
+// scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
@@ -51,7 +51,6 @@ const planet = new THREE.Mesh(cubesphere, materials);
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-console.log(planet);
 scene.add(planet);
 
 camera.position.setZ(20);

@@ -1,35 +1,34 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import Lights from "./SceneSubjects/lighting";
 
 function SceneManager(canvas) {
   const screenDimensions = {
-    width: canvas.width,
-    height: canvas.height,
+    width: canvas.clientWidth,
+    height: canvas.clientHeight,
   };
 
   const scene = new THREE.Scene();
   const renderer = buildRenderer(screenDimensions);
   const camera = buildCamera(screenDimensions);
   const controls = buildOrbitControls(camera, canvas);
-  const sceneSubjects = createSceneSubjects();
+  const sceneSubjects = createSceneSubjects(scene);
+  console.log(screenDimensions);
 
   function buildRenderer({ width, height }) {
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-    const DPR = window.devicePixelRatio ? window.devicePixelRatio : 1;
-    renderer.setPixelRatio(DPR);
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.getElementById("bg"),
+    });
     renderer.setSize(width, height);
-
-    renderer.gammaInput = true;
-    renderer.gammaOutput = true;
 
     return renderer;
   }
 
   function buildCamera({ width, height }) {
     const aspectRatio = width / height;
-    const fieldOfView = 60;
-    const nearPlane = 1;
-    const farPlane = 100;
+    const fieldOfView = 75;
+    const nearPlane = 0.1;
+    const farPlane = 1000;
     const camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
 
     return camera;
@@ -42,7 +41,7 @@ function SceneManager(canvas) {
   }
 
   function createSceneSubjects(scene) {
-    const sceneSubjects = [];
+    const sceneSubjects = [new Lights(scene)];
 
     return sceneSubjects;
   }
