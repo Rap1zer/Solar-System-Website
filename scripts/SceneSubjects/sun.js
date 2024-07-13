@@ -6,8 +6,8 @@ function Sun(scene) {
   const sphere = new THREE.Mesh(geometry, material);
   scene.add(sphere);
 
-  const light = new THREE.PointLight(0xffff00, 1, 100); // Yellow light
-  sphere.add(light); // Attach light to the sun mesh
+  // const light = new THREE.PointLight(0xffff00, 1, 100); // Yellow light
+  // sphere.add(light); // Attach light to the sun mesh
 
   this.update = function () {};
 }

@@ -45,8 +45,12 @@ function SceneManager(canvas) {
     return sceneSubjects;
   }
 
+  const clock = new THREE.Clock();
+  clock.start();
+
   this.update = function () {
-    for (let i = 0; i < sceneSubjects.length; i++) sceneSubjects[i].update();
+    const time = clock.getElapsedTime(); // time passed
+    for (let i = 0; i < sceneSubjects.length; i++) sceneSubjects[i].update(time);
     controls.update();
     renderer.render(scene, camera);
   };
