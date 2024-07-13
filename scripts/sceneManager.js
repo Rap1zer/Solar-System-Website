@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import Lights from "./SceneSubjects/lighting";
+import { Lights, PointCloud, Sun } from "./SceneSubjects";
 
 function SceneManager(canvas) {
   const screenDimensions = {
@@ -13,7 +13,6 @@ function SceneManager(canvas) {
   const camera = buildCamera(screenDimensions);
   const controls = buildOrbitControls(camera, canvas);
   const sceneSubjects = createSceneSubjects(scene);
-  console.log(screenDimensions);
 
   function buildRenderer({ width, height }) {
     const renderer = new THREE.WebGLRenderer({
@@ -30,7 +29,7 @@ function SceneManager(canvas) {
     const nearPlane = 0.1;
     const farPlane = 1000;
     const camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
-
+    camera.position.set(0, 0, 20);
     return camera;
   }
 
@@ -41,7 +40,7 @@ function SceneManager(canvas) {
   }
 
   function createSceneSubjects(scene) {
-    const sceneSubjects = [new Lights(scene)];
+    const sceneSubjects = [new PointCloud(scene), new Sun(scene)];
 
     return sceneSubjects;
   }
