@@ -13,8 +13,8 @@ uniform float peri; // argument of perihelion
 float calculateEccentricAnomaly(float M, float e) {
 	int maxIterations = 10;
 	float tolerance = 0.00001;
-		// Initial guess using Kepler's equation rearrangement
-		float E = M + e * sin(M) + 0.5 * e * e * sin(2.0 * M);
+	// Initial guess (better for small eccentricities)
+	float E = M + e * sin(M);
 	for (int i = 0; i < maxIterations; i++) {
 		// Enew = Eold - f(Eold)/df(Eold)
 		float delta = (E - e * sin(E) - M) / (1. - e * cos(E));
