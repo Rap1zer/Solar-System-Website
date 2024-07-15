@@ -13,8 +13,8 @@ function PointCloud(scene) {
       e: { value: 0.079 }, // eccentricity
       a: { value: 2.767 }, // semimajor axis
       i: { value: THREE.MathUtils.degToRad(10.59) }, // inclination
-      longOfNode: { value: THREE.MathUtils.degToRad(80.25) }, // longitude of ascending node
-      peri: { value: THREE.MathUtils.degToRad(73.36) }, // argument of perihelion
+      ascendingNode: { value: THREE.MathUtils.degToRad(80.25) }, // longitude of ascending node
+      w: { value: THREE.MathUtils.degToRad(73.36) }, // argument of perihelion
     },
     vertexShader,
     fragmentShader,

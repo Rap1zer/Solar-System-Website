@@ -5,11 +5,11 @@ uniform float n; // mean motion
 uniform float e; // eccentricity
 uniform float a; // semimajor axis
 uniform float i; // inclination
-uniform float longOfNode; // longitude of ascending node
-uniform float peri; // argument of perihelion
+uniform float ascendingNode; // longitude of ascending node
+uniform float w; // argument of perihelion
 
-// Newton Raphson method for eccentric anomaly
-// Newton Raphson method for approximate is explained here: https://graphicmaths.com/pure/numerical-methods/newton-raphson-method/
+// Newton Raphson method for approximating eccentric anomaly
+// Method is explained here: https://graphicmaths.com/pure/numerical-methods/newton-raphson-method/
 float calculateEccentricAnomaly(float M, float e) {
 	int maxIterations = 10;
 	float tolerance = 0.00001;
@@ -39,9 +39,9 @@ void main() {
 	float r = a * (1. - e * e) / (1. + e * cos(trueAnomaly));
 
 	// convert to perifocal coordinates
-	float x = r * (cos(longOfNode) * cos(peri + trueAnomaly) - sin(longOfNode) * sin(peri + trueAnomaly) * cos(i));
-	float y = r * sin(peri + trueAnomaly) * sin(i);
-	float z = r * (sin(longOfNode) * cos(peri + trueAnomaly) + cos(longOfNode) * sin(peri + trueAnomaly) * cos(i));
+	float x = r * (cos(ascendingNode) * cos(w + trueAnomaly) - sin(ascendingNode) * sin(w + trueAnomaly) * cos(i));
+	float y = r * sin(w + trueAnomaly) * sin(i);
+	float z = r * (sin(ascendingNode) * cos(w + trueAnomaly) + cos(ascendingNode) * sin(w + trueAnomaly) * cos(i));
 	vec3 orbitalPos = vec3(x, y, z) * scale;
 
 	gl_PointSize = 10.;
