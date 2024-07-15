@@ -8,13 +8,13 @@ function PointCloud(scene) {
   const material = new THREE.ShaderMaterial({
     uniforms: {
       time: { value: 0 },
-      M: { value: 102.95 }, // mean anomaly at epoch
-      n: { value: 0.2141 }, // mean motion
+      M: { value: THREE.MathUtils.degToRad(102.95) }, // mean anomaly at epoch
+      n: { value: THREE.MathUtils.degToRad(0.2141) }, // mean motion
       e: { value: 0.079 }, // eccentricity
       a: { value: 2.767 }, // semimajor axis
-      i: { value: 10.59 }, // inclination
-      longOfNode: { value: 80.25 }, // longitude of ascending node
-      peri: { value: 73.36 }, // argument of perihelion
+      i: { value: THREE.MathUtils.degToRad(10.59) }, // inclination
+      longOfNode: { value: THREE.MathUtils.degToRad(80.25) }, // longitude of ascending node
+      peri: { value: THREE.MathUtils.degToRad(73.36) }, // argument of perihelion
     },
     vertexShader,
     fragmentShader,
@@ -28,7 +28,7 @@ function PointCloud(scene) {
   scene.add(points);
 
   this.update = function (time) {
-    points.material.uniforms.time.value = time * 100;
+    points.material.uniforms.time.value = time * 500;
   };
 }
 

@@ -12,6 +12,7 @@ function SceneManager(canvas) {
   const renderer = buildRenderer(screenDimensions);
   const camera = buildCamera(screenDimensions);
   const controls = buildOrbitControls(camera, canvas);
+  const helpers = buildHelpers(scene);
   const sceneSubjects = createSceneSubjects(scene);
 
   function buildRenderer({ width, height }) {
@@ -37,6 +38,11 @@ function SceneManager(canvas) {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
     return controls;
+  }
+
+  function buildHelpers(scene) {
+    const gridHelper = new THREE.GridHelper(200, 50);
+    scene.add(gridHelper);
   }
 
   function createSceneSubjects(scene) {

@@ -29,19 +29,20 @@ float calculateEccentricAnomaly(float M, float e) {
 void main() {
 	float epoch = 2460400.5;
 	float startDay = 2460506.5;
-	float dist = 10.;
+	float scale = 10.;
 
-	float PI = 3.1415926535897932384626433832795;
-	float degToRad = PI / 180.;
-
+	// Calculate kepler orbital position
 	float currentTime = startDay + time; // seconds are treated as days
-	float meanAnomaly = (M * degToRad) + (n * degToRad) * (currentTime - epoch);
+	float meanAnomaly = M + n * (currentTime - epoch);
 	float eccentricAnomaly = calculateEccentricAnomaly(meanAnomaly, e);
 	float trueAnomaly = 2. * atan(sqrt((1. + e) / (1. - e)) * tan(eccentricAnomaly / 2.));
-	float x = a * (cos(trueAnomaly) - e) * dist;
-	float y = a * sqrt(1. - e * e) * sin(trueAnomaly) * dist;
-	float z = 0.;
-	vec3 orbitalPos = vec3(x, y, z);
+	float r = a * (1. - e * e) / (1. + e * cos(trueAnomaly));
+
+	// convert to perifocal coordinates
+	float x = r * (cos(longOfNode) * cos(peri + trueAnomaly) - sin(longOfNode) * sin(peri + trueAnomaly) * cos(i));
+	float y = r * sin(peri + trueAnomaly) * sin(i);
+	float z = r * (sin(longOfNode) * cos(peri + trueAnomaly) + cos(longOfNode) * sin(peri + trueAnomaly) * cos(i));
+	vec3 orbitalPos = vec3(x, y, z) * scale;
 
 	gl_PointSize = 10.;
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(orbitalPos, 1.0);
