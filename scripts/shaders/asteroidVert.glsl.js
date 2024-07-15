@@ -9,11 +9,12 @@ uniform float longOfNode; // longitude of ascending node
 uniform float peri; // argument of perihelion
 
 // Newton Raphson method for eccentric anomaly
-// Newton Raphson method for approximate is explained here: https://brilliant.org/wiki/newton-raphson-method/?quiz=newton-raphson-method
+// Newton Raphson method for approximate is explained here: https://graphicmaths.com/pure/numerical-methods/newton-raphson-method/
 float calculateEccentricAnomaly(float M, float e) {
-	int maxIterations = 20;
-	float tolerance = 0.0001;
-	float E = M;
+	int maxIterations = 10;
+	float tolerance = 0.00001;
+		// Initial guess using Kepler's equation rearrangement
+		float E = M + e * sin(M) + 0.5 * e * e * sin(2.0 * M);
 	for (int i = 0; i < maxIterations; i++) {
 		// Enew = Eold - f(Eold)/df(Eold)
 		float delta = (E - e * sin(E) - M) / (1. - e * cos(E));
