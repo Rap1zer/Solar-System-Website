@@ -29,7 +29,7 @@ function SceneManager(canvas) {
     const nearPlane = 0.1;
     const farPlane = 1000;
     const camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
-    camera.position.set(0, 0, 20);
+    camera.position.set(0, 0, 30);
     return camera;
   }
 

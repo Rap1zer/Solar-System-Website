@@ -28,13 +28,21 @@ float calculateEccentricAnomaly(float M, float e) {
 
 void main() {
 	float epoch = 2451545.0;
+	float startTime = 0.;
+	float dist = 10.;
 
-	float meanAnomaly = M + n * (time - epoch);
+	// Calculate current time in JD
+	float currentTime = startTime + time;
+
+	// Calculate time since epoch in days
+	float timeSinceEpoch = (currentTime - epoch) / 86400.0; // assuming time is in seconds
+	
+	float meanAnomaly = M + n * timeSinceEpoch;
 	float eccentricAnomaly = calculateEccentricAnomaly(meanAnomaly, e);
 	float trueAnomaly = 2. * atan(sqrt((1. + e) / (1. - e)) * tan(eccentricAnomaly / 2.));
-	float x = a * (cos(trueAnomaly) - e);
-	float y = 0.;
-	float z = a * sqrt(1. - e * e) * sin(trueAnomaly);
+	float x = a * (cos(trueAnomaly) - e) * dist;
+	float y = a * sqrt(1. - e * e) * sin(trueAnomaly) * dist;
+	float z = 0.;
 	vec3 orbitalPos = vec3(x, y, z);
 
 	gl_PointSize = 10.;
