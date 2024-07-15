@@ -28,7 +28,7 @@ function PointCloud(scene) {
   scene.add(points);
 
   this.update = function (time) {
-    points.material.uniforms.time.value = time * 500000;
+    points.material.uniforms.time.value = time * 100;
   };
 }
 

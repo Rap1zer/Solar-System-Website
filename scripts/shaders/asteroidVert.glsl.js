@@ -1,5 +1,5 @@
 export default /* glsl */ `
-uniform float time;
+uniform float time; // time passed where each second is a day
 uniform float M; // mean anomaly at epoch
 uniform float n; // mean motion
 uniform float e; // eccentricity
@@ -27,17 +27,15 @@ float calculateEccentricAnomaly(float M, float e) {
 }
 
 void main() {
-	float epoch = 2451545.0;
-	float startTime = 0.;
+	float epoch = 2460400.5;
+	float startDay = 2460506.5;
 	float dist = 10.;
 
-	// Calculate current time in JD
-	float currentTime = startTime + time;
+	float PI = 3.1415926535897932384626433832795;
+	float degToRad = PI / 180.;
 
-	// Calculate time since epoch in days
-	float timeSinceEpoch = (currentTime - epoch) / 86400.0; // assuming time is in seconds
-	
-	float meanAnomaly = M + n * timeSinceEpoch;
+	float currentTime = startDay + time; // seconds are treated as days
+	float meanAnomaly = (M * degToRad) + (n * degToRad) * (currentTime - epoch);
 	float eccentricAnomaly = calculateEccentricAnomaly(meanAnomaly, e);
 	float trueAnomaly = 2. * atan(sqrt((1. + e) / (1. - e)) * tan(eccentricAnomaly / 2.));
 	float x = a * (cos(trueAnomaly) - e) * dist;
