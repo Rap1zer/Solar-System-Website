@@ -45,7 +45,7 @@ void main() {
 	float z = r * (sin(ascNode) * cos(w + trueAnomaly) + cos(ascNode) * sin(w + trueAnomaly) * cos(i));
 	vec3 orbitalPos = vec3(x, y, z) * scale;
 
-	gl_PointSize = 10.;
+	gl_PointSize = 1.;
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(orbitalPos, 1.0);
 }
 `;

@@ -14,28 +14,21 @@ function Asteroids(scene) {
     fragmentShader,
   });
 
-  const numPoints = 2;
-  const vertices = new Float32Array(numPoints * 3);
-  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-
   loadMsgpack("/simulationData/asteroidOrbitalData.msgpack").then((data) => {
+    const numPoints = data.length;
     const numAttributes = Object.keys(data[0]).length;
+    const vertices = new Float32Array(numPoints * 3);
+    geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
     const orbitalAttributes = new Array(numAttributes)
       .fill()
       .map(() => new Float32Array(numPoints));
-    let limit = 0;
 
     data.forEach((obj, index) => {
-      if (limit >= numPoints) return;
-      limit++;
       Object.keys(obj).forEach((key, pairIndex) => {
         const value = obj[key];
         orbitalAttributes[pairIndex][index] = value;
       });
     });
-    console.log(data[0]);
-    console.log(typeof data[0].a);
-    console.log(typeof data[0].i);
     geometry.setAttribute("a", new THREE.BufferAttribute(orbitalAttributes[0], 1));
     geometry.setAttribute("e", new THREE.BufferAttribute(orbitalAttributes[1], 1));
     geometry.setAttribute("i", new THREE.BufferAttribute(orbitalAttributes[2], 1));
