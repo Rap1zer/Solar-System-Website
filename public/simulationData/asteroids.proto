@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message Asteroid {
+   int32 spkId = 1;
+   string name = 2;
+   float a = 3;
+   float e = 4;
+   float i = 5;
+   float om = 6;
+   float w = 7;
+   float ma = 8;
+   float n = 9;
+   float dataArc = 10;
+   float obsUsed = 11;
+   int32 condition = 12;
+}
