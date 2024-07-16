@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:21c956c77a3d7532ce0f03453f5426d0afc269c1042bc4a1644360b2a32cc426
-size 332
+{
+  "name": "solar-system-website",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.3.1"
+  },
+  "dependencies": {
+    "@msgpack/msgpack": "^3.0.0-beta2",
+    "three": "^0.166.1"
+  }
+}
