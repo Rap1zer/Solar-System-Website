@@ -22,8 +22,11 @@ function Asteroids(scene) {
     const orbitalAttributes = new Array(numAttributes)
       .fill()
       .map(() => new Float32Array(numPoints));
+    let limit = 0;
 
     data.forEach((obj, index) => {
+      if (limit >= 500) return;
+      limit++;
       Object.keys(obj).forEach((key, pairIndex) => {
         const value = obj[key];
         orbitalAttributes[pairIndex][index] = value;
