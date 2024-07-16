@@ -1,4 +1,4 @@
-import { encode, decode } from "@msgpack/msgpack";
+import { encode } from "@msgpack/msgpack";
 const csvFilePath = "/downloadedDatasets/sbdb_query_results.csv";
 
 // Read CSV file
@@ -25,7 +25,16 @@ fetch(csvFilePath)
       result.push(obj);
     }
 
-    const msgpackResult = encode(result);
+    const buffer = encode(result);
+
+    const blob = new Blob([buffer], { type: "application/msgpack" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "asteroidData.msgpack";
+    a.click();
+    URL.revokeObjectURL(url);
 
     console.log("File has been written successfully!");
   })
