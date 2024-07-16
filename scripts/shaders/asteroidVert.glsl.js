@@ -1,12 +1,13 @@
 export default /* glsl */ `
 uniform float time; // time passed where each second is a day
-uniform float M; // mean anomaly at epoch
-uniform float n; // mean motion
-uniform float e; // eccentricity
-uniform float a; // semimajor axis
-uniform float i; // inclination
-uniform float ascendingNode; // longitude of ascending node
-uniform float w; // argument of perihelion
+
+attribute float M; // mean anomaly at epoch
+attribute float n; // mean motion
+attribute float e; // eccentricity
+attribute float a; // semimajor axis
+attribute float i; // inclination
+attribute float ascNode; // longitude of ascending node
+attribute float w; // argument of perihelion
 
 // Newton Raphson method for approximating eccentric anomaly
 // Method is explained here: https://graphicmaths.com/pure/numerical-methods/newton-raphson-method/
@@ -39,9 +40,9 @@ void main() {
 	float r = a * (1. - e * e) / (1. + e * cos(trueAnomaly));
 
 	// convert to perifocal coordinates
-	float x = r * (cos(ascendingNode) * cos(w + trueAnomaly) - sin(ascendingNode) * sin(w + trueAnomaly) * cos(i));
+	float x = r * (cos(ascNode) * cos(w + trueAnomaly) - sin(ascNode) * sin(w + trueAnomaly) * cos(i));
 	float y = r * sin(w + trueAnomaly) * sin(i);
-	float z = r * (sin(ascendingNode) * cos(w + trueAnomaly) + cos(ascendingNode) * sin(w + trueAnomaly) * cos(i));
+	float z = r * (sin(ascNode) * cos(w + trueAnomaly) + cos(ascNode) * sin(w + trueAnomaly) * cos(i));
 	vec3 orbitalPos = vec3(x, y, z) * scale;
 
 	gl_PointSize = 10.;

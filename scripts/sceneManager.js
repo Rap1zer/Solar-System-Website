@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Lights, PointCloud, Sun } from "./SceneSubjects";
+import { Lights, Asteroids, Sun } from "./SceneSubjects";
 
 function SceneManager(canvas) {
   const screenDimensions = {
@@ -46,7 +46,7 @@ function SceneManager(canvas) {
   }
 
   function createSceneSubjects(scene) {
-    const sceneSubjects = [new PointCloud(scene), new Sun(scene)];
+    const sceneSubjects = [new Asteroids(scene), new Sun(scene)];
 
     return sceneSubjects;
   }

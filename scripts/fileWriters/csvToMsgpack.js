@@ -1,4 +1,4 @@
-import { encode } from "@msgpack/msgpack";
+import { encode, decode } from "@msgpack/msgpack";
 const csvFilePath = "/downloadedDatasets/sbdb_query_results.csv";
 
 // Read CSV file
@@ -19,7 +19,7 @@ fetch(csvFilePath)
         if (j === 2 || j === 3 || j === 4 || j === 11 || j === 12) {
           currentline[j] = (parseFloat(currentline[j]) * Math.PI) / 180;
         }
-        obj[headers[j]] = currentline[j];
+        if (j < 5 || j > 10) obj[headers[j]] = currentline[j];
       }
 
       result.push(obj);
@@ -32,7 +32,7 @@ fetch(csvFilePath)
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "asteroidData.msgpack";
+    a.download = "asteroidOrbitalData.msgpack";
     a.click();
     URL.revokeObjectURL(url);
 

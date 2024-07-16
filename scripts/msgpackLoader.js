@@ -10,13 +10,12 @@ async function loadMsgpack(url) {
 
     const buffer = await response.arrayBuffer();
 
-    const decodedData = decode(new Uint8Array(buffer));
-    console.log(decodedData);
+    const decodedData = decode(buffer);
 
-    return decodedData; // Return decoded data if needed
+    return decodedData;
   } catch (error) {
     console.error("Error fetching or decoding encoded data:", error);
-    throw error; // Re-throw the error or handle as needed
+    throw error;
   }
 }
 

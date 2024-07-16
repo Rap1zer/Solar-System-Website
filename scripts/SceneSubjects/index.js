@@ -1,5 +1,5 @@
 import Lights from "./lighting";
-import PointCloud from "./pointCloud";
+import Asteroids from "./Asteroids";
 import Sun from "./sun";
 
-export { Lights, PointCloud, Sun };
+export { Lights, Asteroids, Sun };
