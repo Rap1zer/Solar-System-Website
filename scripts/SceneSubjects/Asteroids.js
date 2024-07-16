@@ -14,7 +14,7 @@ function Asteroids(scene) {
     fragmentShader,
   });
 
-  const numPoints = 1;
+  const numPoints = 2;
   const vertices = new Float32Array(numPoints * 3);
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
 
@@ -26,24 +26,24 @@ function Asteroids(scene) {
     let limit = 0;
 
     data.forEach((obj, index) => {
-      for (let pair = 0; pair < numAttributes; pair++) {
-        const key = Object.keys(obj)[pair];
+      if (limit >= numPoints) return;
+      limit++;
+      Object.keys(obj).forEach((key, pairIndex) => {
         const value = obj[key];
-        if (limit >= numPoints) return;
-        limit++;
-        orbitalAttributes[pair][index] = value;
-      }
+        orbitalAttributes[pairIndex][index] = value;
+      });
     });
     console.log(data[0]);
-    geometry.setAttribute("M", new THREE.BufferAttribute(orbitalAttributes[0], 1));
-    geometry.setAttribute("n", new THREE.BufferAttribute(orbitalAttributes[1], 1));
-    geometry.setAttribute("e", new THREE.BufferAttribute(orbitalAttributes[2], 1));
-    geometry.setAttribute("a", new THREE.BufferAttribute(orbitalAttributes[3], 1));
-    geometry.setAttribute("i", new THREE.BufferAttribute(orbitalAttributes[4], 1));
+    console.log(typeof data[0].a);
+    console.log(typeof data[0].i);
+    geometry.setAttribute("a", new THREE.BufferAttribute(orbitalAttributes[0], 1));
+    geometry.setAttribute("e", new THREE.BufferAttribute(orbitalAttributes[1], 1));
+    geometry.setAttribute("i", new THREE.BufferAttribute(orbitalAttributes[2], 1));
+    geometry.setAttribute("M", new THREE.BufferAttribute(orbitalAttributes[3], 1));
+    geometry.setAttribute("w", new THREE.BufferAttribute(orbitalAttributes[4], 1));
     geometry.setAttribute("ascNode", new THREE.BufferAttribute(orbitalAttributes[5], 1));
-    geometry.setAttribute("w", new THREE.BufferAttribute(orbitalAttributes[6], 1));
+    geometry.setAttribute("n", new THREE.BufferAttribute(orbitalAttributes[6], 1));
   });
-
   const points = new THREE.Points(geometry, material);
   scene.add(points);
 

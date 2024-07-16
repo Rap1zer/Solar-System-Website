@@ -15,9 +15,10 @@ fetch(csvFilePath)
       const currentline = lines[i].split(",");
 
       for (let j = 0; j < headers.length; j++) {
+        currentline[j] = parseFloat(currentline[j]);
         // convert degrees to radians for specific columns
         if (j === 2 || j === 3 || j === 4 || j === 11 || j === 12) {
-          currentline[j] = (parseFloat(currentline[j]) * Math.PI) / 180;
+          currentline[j] = (currentline[j] * Math.PI) / 180;
         }
         if (j < 5 || j > 10) obj[headers[j]] = currentline[j];
       }
