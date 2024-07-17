@@ -10,17 +10,21 @@ fetch(csvFilePath)
     const headers = lines[0].split(",").map((header) => header.trim().replace(/^"(.*)"$/, "$1"));
 
     // Parse each line after the header
-    for (let i = 1; i < lines.length; i++) {
+    for (let row = 1; row < lines.length; row++) {
       const obj = {};
-      const currentline = lines[i].split(",");
+      const currentline = lines[row].split(",");
 
-      for (let j = 0; j < headers.length; j++) {
-        currentline[j] = parseFloat(currentline[j]);
+      // skip obj if eccentricity is greater than 1
+      if (currentline[1] > 1) continue;
+
+      for (let col = 0; col < headers.length; col++) {
+        if (col >= 5 || col <= 10) continue; // skip columns 5 to 10
+        currentline[col] = parseFloat(currentline[col]);
         // convert degrees to radians for specific columns
-        if (j === 2 || j === 3 || j === 4 || j === 11 || j === 12) {
-          currentline[j] = (currentline[j] * Math.PI) / 180;
+        if (col === 2 || col === 3 || col === 4 || col === 11 || col === 12) {
+          currentline[col] = (currentline[col] * Math.PI) / 180;
         }
-        if (j < 5 || j > 10) obj[headers[j]] = currentline[j];
+        obj[headers[col]] = currentline[col];
       }
 
       result.push(obj);
