@@ -18,7 +18,7 @@ fetch(csvFilePath)
       if (currentline[1] > 1) continue;
 
       for (let col = 0; col < headers.length; col++) {
-        if (col >= 5 || col <= 10) continue; // skip columns 5 to 10
+        if (col >= 5 || col <= 10) continue; // skip columns 5-10
         currentline[col] = parseFloat(currentline[col]);
         // convert degrees to radians for specific columns
         if (col === 2 || col === 3 || col === 4 || col === 11 || col === 12) {

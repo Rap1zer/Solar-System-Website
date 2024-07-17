@@ -6,7 +6,7 @@ attribute float n; // mean motion
 attribute float e; // eccentricity
 attribute float a; // semimajor axis
 attribute float i; // inclination
-attribute float ascNode; // longitude of ascending node
+attribute float om; // longitude of ascending node
 attribute float w; // argument of perihelion
 
 // Newton Raphson method for approximating eccentric anomaly
@@ -40,9 +40,9 @@ void main() {
 	float r = a * (1. - e * e) / (1. + e * cos(trueAnomaly));
 
 	// convert to perifocal coordinates
-	float x = r * (cos(ascNode) * cos(w + trueAnomaly) - sin(ascNode) * sin(w + trueAnomaly) * cos(i));
+	float x = r * (cos(om) * cos(w + trueAnomaly) - sin(om) * sin(w + trueAnomaly) * cos(i));
 	float y = r * sin(w + trueAnomaly) * sin(i);
-	float z = r * (sin(ascNode) * cos(w + trueAnomaly) + cos(ascNode) * sin(w + trueAnomaly) * cos(i));
+	float z = r * (sin(om) * cos(w + trueAnomaly) + cos(om) * sin(w + trueAnomaly) * cos(i));
 	vec3 orbitalPos = vec3(x, y, z) * scale;
 
 	gl_PointSize = 1.;
