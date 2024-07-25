@@ -1,6 +1,10 @@
 export default /* glsl */ `
+precision mediump float;
+
+out vec4 FragColor;
+
 void main() {
-	vec3 color = vec3(0.588, 1, 0.82);
-	gl_FragColor = vec4(color, 1.0);
+	vec3 color = vec3(204.0, 255.0, 250.0) / 255.0; // temporary color
+	FragColor = vec4(color, 1.0);
 }
 `;

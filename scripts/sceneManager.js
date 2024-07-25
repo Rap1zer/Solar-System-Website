@@ -12,8 +12,8 @@ function SceneManager(canvas) {
   const renderer = buildRenderer(screenDimensions);
   const camera = buildCamera(screenDimensions);
   const controls = buildOrbitControls(camera, canvas);
-  const helpers = buildHelpers(scene);
   const sceneSubjects = createSceneSubjects(scene);
+  // buildHelpers(scene);
 
   function buildRenderer({ width, height }) {
     const renderer = new THREE.WebGLRenderer({

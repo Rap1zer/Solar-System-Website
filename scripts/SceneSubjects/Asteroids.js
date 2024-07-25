@@ -13,10 +13,13 @@ class Asteroids {
       },
       vertexShader,
       fragmentShader,
+      glslVersion: THREE.GLSL3,
     });
 
     loadMsgpack("/simulationData/asteroidOrbitalData.msgpack").then((data) => {
-      const numPoints = data.length;
+      const startingIndex = 0;
+      const limit = 0 + startingIndex;
+      const numPoints = limit || data.length;
 
       const vertices = new Float32Array(numPoints * 3);
       geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
@@ -25,16 +28,19 @@ class Asteroids {
       const orbitalAttributes = new Array(numOrbitalAttributes)
         .fill()
         .map(() => new Float32Array(numPoints));
-      let limit = 0;
 
-      data.forEach((obj, index) => {
-        if (limit >= 500) return;
-        limit++;
+      for (let i = startingIndex; i < numPoints; i++) {
+        const obj = data[i];
         Object.keys(obj).forEach((key, pairIndex) => {
           const value = obj[key];
-          orbitalAttributes[pairIndex][index] = value;
+          orbitalAttributes[pairIndex][i] = value;
         });
-      });
+      }
+
+      // for (let i = startingIndex; i < numPoints; i++) {
+      //   console.log(data[i]);
+      // }
+
       geometry.setAttribute("a", new THREE.BufferAttribute(orbitalAttributes[0], 1));
       geometry.setAttribute("e", new THREE.BufferAttribute(orbitalAttributes[1], 1));
       geometry.setAttribute("i", new THREE.BufferAttribute(orbitalAttributes[2], 1));
