@@ -17,37 +17,23 @@ class Asteroids {
     });
 
     loadMsgpack("/simulationData/asteroidOrbitalData.msgpack").then((data) => {
-      const startingIndex = 0;
-      const limit = 0 + startingIndex;
-      const numPoints = limit || data.length;
+      const numPoints = data.length;
 
       const vertices = new Float32Array(numPoints * 3);
       geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
 
-      const numOrbitalAttributes = Object.keys(data[0]).length;
-      const orbitalAttributes = new Array(numOrbitalAttributes)
-        .fill()
-        .map(() => new Float32Array(numPoints));
+      const orbitalAttributes = Object.keys(data[0]).map(() => new Float32Array(numPoints));
 
-      for (let i = startingIndex; i < numPoints; i++) {
-        const obj = data[i];
-        Object.keys(obj).forEach((key, pairIndex) => {
-          const value = obj[key];
+      data.forEach((obj, i) => {
+        Object.values(obj).forEach((value, pairIndex) => {
           orbitalAttributes[pairIndex][i] = value;
         });
-      }
+      });
 
-      // for (let i = startingIndex; i < numPoints; i++) {
-      //   console.log(data[i]);
-      // }
-
-      geometry.setAttribute("a", new THREE.BufferAttribute(orbitalAttributes[0], 1));
-      geometry.setAttribute("e", new THREE.BufferAttribute(orbitalAttributes[1], 1));
-      geometry.setAttribute("i", new THREE.BufferAttribute(orbitalAttributes[2], 1));
-      geometry.setAttribute("om", new THREE.BufferAttribute(orbitalAttributes[3], 1));
-      geometry.setAttribute("w", new THREE.BufferAttribute(orbitalAttributes[4], 1));
-      geometry.setAttribute("M", new THREE.BufferAttribute(orbitalAttributes[5], 1));
-      geometry.setAttribute("n", new THREE.BufferAttribute(orbitalAttributes[6], 1));
+      const attributeKeys = ["a", "e", "i", "om", "w", "M", "n"];
+      attributeKeys.forEach((key, index) => {
+        geometry.setAttribute(key, new THREE.BufferAttribute(orbitalAttributes[index], 1));
+      });
     });
 
     this.points = new THREE.Points(geometry, material);
