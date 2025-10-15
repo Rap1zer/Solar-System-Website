@@ -1,47 +1,51 @@
+// Asteroids.js
 import * as THREE from "three";
 import vertexShader from "../shaders/asteroidVert.glsl";
 import fragmentShader from "../shaders/asteroidFrag.glsl";
-import loadMsgpack from "../fileReaders/msgpackLoader";
+import { fetchAsteroidData } from "../fileReaders/fetchAsteroidData";
 
 class Asteroids {
   points;
+  geometry;
+  material;
+
   constructor(scene) {
-    const geometry = new THREE.BufferGeometry();
-    const material = new THREE.ShaderMaterial({
-      uniforms: {
-        time: { value: 0 },
-      },
+    this.geometry = new THREE.BufferGeometry();
+    this.material = new THREE.ShaderMaterial({
+      uniforms: { time: { value: 0 } },
       vertexShader,
       fragmentShader,
       glslVersion: THREE.GLSL3,
     });
 
-    loadMsgpack("/simulationData/asteroidOrbitalData.msgpack").then((data) => {
-      const numPoints = data.length;
-
-      const vertices = new Float32Array(numPoints * 3);
-      geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-
-      const orbitalAttributes = Object.keys(data[0]).map(() => new Float32Array(numPoints));
-
-      data.forEach((obj, i) => {
-        Object.values(obj).forEach((value, pairIndex) => {
-          orbitalAttributes[pairIndex][i] = value;
-        });
-      });
-
-      const attributeKeys = ["a", "e", "i", "om", "w", "M", "n"];
-      attributeKeys.forEach((key, index) => {
-        geometry.setAttribute(key, new THREE.BufferAttribute(orbitalAttributes[index], 1));
-      });
-    });
-
-    this.points = new THREE.Points(geometry, material);
+    this.points = new THREE.Points(this.geometry, this.material);
     scene.add(this.points);
+
+    this.loadData("/simulationData/asteroidOrbitalData.msgpack");
+  }
+
+  async loadData(url) {
+    try {
+      const { attributeArrays, numPoints } = await fetchAsteroidData(url);
+
+      // Setup positions (empty for now, computed in shader)
+      const positions = new Float32Array(numPoints * 3);
+      this.geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+      // Set orbital attributes
+      Object.entries(attributeArrays).forEach(([name, array]) => {
+        this.geometry.setAttribute(name, new THREE.BufferAttribute(array, 1));
+      });
+
+      console.log(`✅ Loaded ${numPoints} asteroids`);
+      console.log("First asteroid object attributes:", attributeArrays);
+    } catch (err) {
+      console.error("Failed to load asteroid data:", err);
+    }
   }
 
   update(time) {
-    this.points.material.uniforms.time.value = time * 500;
+    this.material.uniforms.time.value = time;
   }
 }
 

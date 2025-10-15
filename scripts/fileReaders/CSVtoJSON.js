@@ -1,4 +1,4 @@
-const csvFilePath = "/downloadedDatasets/sbdb_query_results.csv";
+const csvFilePath = "/downloadedDatasets/sbdb_query_results_new.csv";
 
 // Read CSV file
 fetch(csvFilePath)

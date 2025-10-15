@@ -1,5 +1,5 @@
 import { encode, decode } from "@msgpack/msgpack";
-const csvFilePath = "/downloadedDatasets/sbdb_query_results.csv";
+const csvFilePath = "/downloadedDatasets/sbdb_query_results_new.csv";
 
 // Read CSV file
 fetch(csvFilePath)
@@ -18,8 +18,8 @@ fetch(csvFilePath)
       if (currentline[1] > 1) continue;
 
       for (let col = 0; col < headers.length; col++) {
-        if (col >= 5 || col <= 10) continue; // skip columns 5-10
-        currentline[col] = parseFloat(currentline[col]);
+        let isNum = /^\d+(\.\d+)?$/.test(currentline[col]);
+        currentline[col] = isNum ? parseFloat(currentline[col]) : currentline[col];
         // convert degrees to radians for specific columns
         if (col === 2 || col === 3 || col === 4 || col === 11 || col === 12) {
           currentline[col] = (currentline[col] * Math.PI) / 180;

@@ -28,7 +28,7 @@ function SceneManager(canvas) {
     const aspectRatio = width / height;
     const fieldOfView = 75;
     const nearPlane = 0.1;
-    const farPlane = 3000;
+    const farPlane = 7000;
     const camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
     camera.position.set(0, 0, 30);
     return camera;
