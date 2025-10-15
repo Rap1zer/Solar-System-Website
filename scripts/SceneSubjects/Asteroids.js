@@ -45,7 +45,7 @@ class Asteroids {
   }
 
   update(time) {
-    this.material.uniforms.time.value = time;
+    this.material.uniforms.time.value = time * 500;
   }
 }
 

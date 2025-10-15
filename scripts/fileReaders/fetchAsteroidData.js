@@ -21,6 +21,7 @@ export async function fetchAsteroidData(url) {
     { key: "w", name: "w" },
     { key: "ma", name: "M" }, // map 'ma' -> 'M'
     { key: "n", name: "n" },
+    { key: "epoch", name: "epoch" },
   ];
 
   const attributes = {};

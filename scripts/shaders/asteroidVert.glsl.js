@@ -11,6 +11,7 @@ in float a; // semimajor axis
 in float i; // inclination
 in float om; // longitude of ascending node
 in float w; // argument of perihelion
+in float epoch; // Reference epoch (Julian Date) of the mean anomaly and other orbital parameters
 
 // Newton Raphson method for approximating eccentric anomaly
 // Method is explained here: https://graphicmaths.com/pure/numerical-methods/newton-raphson-method/
@@ -31,8 +32,7 @@ float calculateEccentricAnomaly(float M, float e) {
 }
 
 void main() {
-	float epoch = 2460400.5;
-	float startDay = 2460506.5;
+	float startDay = 2460961.5;
 	float scale = 30.;
 
 	// Calculate kepler orbital position
