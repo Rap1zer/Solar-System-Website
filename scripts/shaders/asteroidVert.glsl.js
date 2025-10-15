@@ -1,55 +1,84 @@
 export default /* glsl */ `
-precision lowp float;
+precision highp float;
 
 uniform float time; // time passed where each second is a day
 
 // Attributes become 'in' variables
-in float M; // mean anomaly at epoch
-in float n; // mean motion
+in float M; // mean anomaly at epoch (radians)
+in float n; // mean motion (radians/day)
 in float e; // eccentricity
 in float a; // semimajor axis
-in float i; // inclination
-in float om; // longitude of ascending node
-in float w; // argument of perihelion
+in float i; // inclination (radians)
+in float om; // longitude of ascending node (Ω) (radians)
+in float w; // argument of perihelion (ω) (radians)
 in float epoch; // Reference epoch (Julian Date) of the mean anomaly and other orbital parameters
 
-// Newton Raphson method for approximating eccentric anomaly
-// Method is explained here: https://graphicmaths.com/pure/numerical-methods/newton-raphson-method/
-float calculateEccentricAnomaly(float M, float e) {
-	int maxIterations = 10;
-	float tolerance = 0.00001;
-	// Initial guess (better for small eccentricities)
-	float E = M + e * sin(M);
-	for (int j = 0; j < maxIterations; j++) {
-		// Enew = Eold - f(Eold)/df(Eold)
-		float delta = (E - e * sin(E) - M) / (1. - e * cos(E));
-		E = E - delta;
-		if (abs(delta) < tolerance) {
-			return E;
-		}
-	}
-	return E;
+const float PI = 3.141592653589793;
+
+// Newton-Raphson for eccentric anomaly
+float calculateEccentricAnomaly(float Mval, float eVal) {
+    int maxIterations = 12;
+    float tol = 1e-6;
+
+    // - for small-to-moderate e use M + e*sin(M)
+    // - for large e use PI (better convergence in many cases)
+    float E = (eVal < 0.8) ? (Mval + eVal * sin(Mval)) : PI;
+
+    for (int k = 0; k < maxIterations; ++k) {
+        float f = E - eVal * sin(E) - Mval;
+        float fp = 1.0 - eVal * cos(E); // derivative
+        float delta = f / fp;
+        E -= delta;
+        if (abs(delta) < tol) break;
+    }
+    return E;
 }
 
 void main() {
-	float startDay = 2460961.5;
-	float scale = 30.;
+    float startDay = 2460961.5;
+    float scale = 30.0;
 
-	// Calculate kepler orbital position
-	float currentTime = startDay + time; // seconds are treated as days
-	float meanAnomaly = M + n * (currentTime - epoch);
-	float eccentricAnomaly = calculateEccentricAnomaly(meanAnomaly, e);
-	float trueAnomaly = 2. * atan(sqrt((1. + e) / (1. - e)) * tan(eccentricAnomaly / 2.));
-	float r = a * (1. - e * e) / (1. + e * cos(trueAnomaly));
+    // --- time & mean anomaly (time in days) ---
+    float currentTime = startDay + time;
+    float meanAnom = mod(M + n * (currentTime - epoch), 2.0 * PI);
 
-	// convert to perifocal / cartesian coordinates
-	float x = r * (cos(om) * cos(w + trueAnomaly) - sin(om) * sin(w + trueAnomaly) * cos(i));
-	float y = r * sin(w + trueAnomaly) * sin(i);
-	float z = r * (sin(om) * cos(w + trueAnomaly) + cos(om) * sin(w + trueAnomaly) * cos(i));
-	vec3 orbitalPos = vec3(x, y, z) * scale;
+    // --- solve Kepler's equation for E ---
+    float E = calculateEccentricAnomaly(meanAnom, e);
 
-	gl_PointSize = 1.;
-	gl_Position = projectionMatrix * modelViewMatrix * vec4(orbitalPos, 1.0);
+    // --- reuse trig/subexpressions ---
+    float cosE = cos(E);
+    float sinE = sin(E);
+
+    float denom = 1.0 - e * cosE; // reused below; guard for near-zero if needed
+    float sqrtTerm = sqrt(max(0.0, 1.0 - e * e));
+
+    // cos(v) and sin(v) computed directly (avoids atan/tan)
+    float cosv = (cosE - e) / denom;
+    float sinv = (sqrtTerm * sinE) / denom;
+
+    // radius r using cos(v)
+    float r = a * (1.0 - e * e) / (1.0 + e * cosv);
+
+    // compute cos(w+v) and sin(w+v) from cosv/sinv and cos/sin(w)
+    float cosw = cos(w);
+    float sinw = sin(w);
+    float cos_wpv = cosw * cosv - sinw * sinv; // cos(ω + ν)
+    float sin_wpv = sinw * cosv + cosw * sinv; // sin(ω + ν)
+
+    // precompute node/inclination trig
+    float cosO = cos(om);
+    float sinO = sin(om);
+    float cosi = cos(i);
+    float sini = sin(i);
+
+    // final inertial coordinates (perifocal -> inertial)
+    float X = r * (cosO * cos_wpv - sinO * sin_wpv * cosi);
+    float Y = r * (sinO * cos_wpv + cosO * sin_wpv * cosi);
+    float Z = r * (sin_wpv * sini);
+
+    vec3 orbitalPos = vec3(X, Y, Z) * scale;
+
+    gl_PointSize = 1.0;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(orbitalPos, 1.0);
 }
-
 `;
