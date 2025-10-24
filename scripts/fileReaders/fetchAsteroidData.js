@@ -1,41 +1,26 @@
-// utils/fetchAsteroidData.js
 import loadMsgpack from "./msgpackLoader";
 
 /**
- * Fetches and prepares asteroid orbital data from Msgpack.
- * Returns a promise that resolves to an object:
- * {
- *   attributeArrays: { a: Float32Array, e: Float32Array, ... },
- *   numPoints: number
- * }
+ * Fetches asteroid orbital data from columnar Msgpack.
+ * Returns typed arrays without nested loops.
  */
 export async function fetchAsteroidData(url) {
-  const [headers, rows] = await loadMsgpack(url);
-  const numPoints = rows.length;
+  // Load Msgpack (column-oriented)
+  const columns = await loadMsgpack(url);
 
-  // columns we care about, but now by column index
-  // Find column indices by header name once
-  const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch"];
-  const idx = Object.fromEntries(
-    wanted.map(name => [name, headers.indexOf(name)])
-  );
+  const attributeArrays = {};
+  const numPoints = columns[Object.keys(columns)[0]].length; // number of rows
 
-  // Pre-allocate typed arrays
-  const attributes = Object.fromEntries(
-    wanted.map(name => [name, new Float32Array(numPoints)])
-  );
-
-  // Fill typed arrays by index
-  for (let i = 0; i < numPoints; i++) {
-    const row = rows[i];
-    for (const name of wanted) {
-      attributes[name][i] = row[idx[name]];
-    }
+  // Convert JS arrays to Float32Array for numeric columns
+  for (const [name, arr] of Object.entries(columns)) {
+    attributeArrays[name] = new Float32Array(arr);
   }
 
-  // If you still want ma -> M alias:
-  attributes["M"] = attributes["ma"];
-  delete attributes["ma"];
+  // Optional alias
+  if (attributeArrays["ma"]) {
+    attributeArrays["M"] = attributeArrays["ma"];
+    delete attributeArrays["ma"];
+  }
 
-  return { attributeArrays: attributes, numPoints };
+  return { attributeArrays, numPoints };
 }
