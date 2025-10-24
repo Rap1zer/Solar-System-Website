@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Lights, Asteroids, Sun } from "./SceneSubjects";
+import Stats from 'stats.js';
 
 function SceneManager(canvas) {
   const screenDimensions = {
@@ -54,11 +55,19 @@ function SceneManager(canvas) {
   const clock = new THREE.Clock();
   clock.start();
 
+  const stats = new Stats();
+  stats.showPanel(0); // fps
+  document.body.appendChild(stats.dom);
+
   this.update = function () {
+    stats.begin();
+
     const time = clock.getElapsedTime(); // time passed
     for (let i = 0; i < sceneSubjects.length; i++) sceneSubjects[i].update(time);
     controls.update();
     renderer.render(scene, camera);
+
+    stats.end();
   };
 }
 

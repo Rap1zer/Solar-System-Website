@@ -10,30 +10,32 @@ import loadMsgpack from "./msgpackLoader";
  * }
  */
 export async function fetchAsteroidData(url) {
-  const data = await loadMsgpack(url);
-  const numPoints = data.length;
+  const [headers, rows] = await loadMsgpack(url);
+  const numPoints = rows.length;
 
-  const attributeKeys = [
-    { key: "a", name: "a" },
-    { key: "e", name: "e" },
-    { key: "i", name: "i" },
-    { key: "om", name: "om" },
-    { key: "w", name: "w" },
-    { key: "ma", name: "M" }, // map 'ma' -> 'M'
-    { key: "n", name: "n" },
-    { key: "epoch", name: "epoch" },
-  ];
+  // columns we care about, but now by column index
+  // Find column indices by header name once
+  const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch"];
+  const idx = Object.fromEntries(
+    wanted.map(name => [name, headers.indexOf(name)])
+  );
 
-  const attributes = {};
-  attributeKeys.forEach(({ name }) => {
-    attributes[name] = new Float32Array(numPoints);
-  });
+  // Pre-allocate typed arrays
+  const attributes = Object.fromEntries(
+    wanted.map(name => [name, new Float32Array(numPoints)])
+  );
 
-  data.forEach((obj, i) => {
-    attributeKeys.forEach(({ key, name }) => {
-      attributes[name][i] = obj[key];
-    });
-  });
+  // Fill typed arrays by index
+  for (let i = 0; i < numPoints; i++) {
+    const row = rows[i];
+    for (const name of wanted) {
+      attributes[name][i] = row[idx[name]];
+    }
+  }
+
+  // If you still want ma -> M alias:
+  attributes["M"] = attributes["ma"];
+  delete attributes["ma"];
 
   return { attributeArrays: attributes, numPoints };
 }

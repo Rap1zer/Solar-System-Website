@@ -1,4 +1,4 @@
-import { encode, decode } from "@msgpack/msgpack";
+import { encode } from "@msgpack/msgpack";
 const csvFilePath = "/downloadedDatasets/sbdb_query_results_new.csv";
 
 // Read CSV file
@@ -11,26 +11,33 @@ fetch(csvFilePath)
 
     // Parse each line after the header
     for (let row = 1; row < lines.length; row++) {
-      const obj = {};
       const currentline = lines[row].split(",");
 
-      // skip obj if eccentricity is greater than 1
-      if (currentline[1] > 1) continue;
+      // skip invalid or empty lines
+      if (currentline.length !== headers.length) continue;
+
+      // skip object if eccentricity > 1 (column 1)
+      const e = parseFloat(currentline[1]);
+      if (isNaN(e) || e > 1) continue;
+
+      const rowArr = [];
 
       for (let col = 0; col < headers.length; col++) {
-        let isNum = /^\d+(\.\d+)?$/.test(currentline[col]);
-        currentline[col] = isNum ? parseFloat(currentline[col]) : currentline[col];
-        // convert degrees to radians for specific columns
+        let val = currentline[col];
+        const isNum = /^\d+(\.\d+)?$/.test(val);
+        val = isNum ? parseFloat(val) : val;
+
         if (col === 2 || col === 3 || col === 4 || col === 11 || col === 12) {
-          currentline[col] = (currentline[col] * Math.PI) / 180;
+          val = (val * Math.PI) / 180;
         }
-        obj[headers[col]] = currentline[col];
+
+        rowArr.push(val);
       }
 
-      result.push(obj);
+      result.push(rowArr);
     }
 
-    const buffer = encode(result);
+    const buffer = encode([headers, result]);
 
     const blob = new Blob([buffer], { type: "application/msgpack" });
     const url = URL.createObjectURL(blob);
