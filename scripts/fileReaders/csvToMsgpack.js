@@ -1,62 +1,60 @@
 import { encode } from "@msgpack/msgpack";
 
-const csvFilePath = "/downloadedDatasets/sbdb_query_results_new.csv";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Read CSV file and convert to column-oriented Msgpack
-fetch(csvFilePath)
-  .then((response) => response.text())
-  .then((csv) => {
-    const lines = csv.split("\n");
+// Get the directory of this script
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-    // Parse headers
-    const headers = lines[0].split(",").map(h => h.trim().replace(/^"(.*)"$/, "$1"));
+// Path relative to project root
+const projectRoot = path.join(__dirname, "..", "..");
+const csvFilePath = path.join(projectRoot, "downloadedDatasets", "sbdb_query_results_new.csv");
+const msgpackFilePath = path.join(projectRoot, "public/simulationData", "asteroidOrbitalData.msgpack");
 
-    // Columns we care about
-    const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch"];
-    
-    // Initialize empty arrays for each column
-    const columns = Object.fromEntries(wanted.map(name => [name, []]));
+const csv = fs.readFileSync(csvFilePath, "utf8");
+console.log("CSV loaded successfully");
+const lines = csv.split("\n");
 
-    // Process rows
-    for (let row = 1; row < lines.length; row++) {
-      const currentline = lines[row].split(",");
-      if (currentline.length !== headers.length) continue;
+// Parse headers
+const headers = lines[0].split(",").map(h => h.trim().replace(/^"(.*)"$/, "$1"));
 
-      const e = parseFloat(currentline[1]);
-      if (isNaN(e) || e > 1) continue; // skip invalid eccentricity
+// Columns we care about
+const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch"];
 
-      // Push values directly into columns
-      for (const name of wanted) {
-        const colIdx = headers.indexOf(name);
-        let val = currentline[colIdx];
+// Initialize empty arrays for each column
+const columns = Object.fromEntries(wanted.map(name => [name, []]));
 
-        // Convert numbers
-        const isNum = /^\d+(\.\d+)?$/.test(val);
-        val = isNum ? parseFloat(val) : val;
+// Process rows
+for (let row = 1; row < lines.length; row++) {
+  const currentline = lines[row].split(",");
+  if (currentline.length !== headers.length) continue;
 
-        // Convert certain columns from degrees → radians
-        if (["i", "om", "w", "M", "n"].includes(name) || [2,3,4,11,12].includes(colIdx)) {
-          if (!isNaN(val)) val = (val * Math.PI) / 180;
-        }
+  const e = parseFloat(currentline[1]);
+  if (isNaN(e) || e > 1) continue; // skip invalid eccentricity
 
-        columns[name].push(val);
-      }
+  // Push values directly into columns
+  for (const name of wanted) {
+    const colIdx = headers.indexOf(name);
+    let val = currentline[colIdx];
+
+    // Convert numbers
+    const isNum = /^\d+(\.\d+)?$/.test(val);
+    val = isNum ? parseFloat(val) : val;
+
+    // Convert certain columns from degrees → radians
+    if (["i", "om", "w", "M", "n"].includes(name) || [2,3,4,11,12].includes(colIdx)) {
+      if (!isNaN(val)) val = (val * Math.PI) / 180;
     }
 
-    // Encode columnar structure with Msgpack
-    const buffer = encode(columns);
+    columns[name].push(val);
+  }
+}
 
-    const blob = new Blob([buffer], { type: "application/msgpack" });
-    const url = URL.createObjectURL(blob);
+// Encode columnar structure with Msgpack
+const buffer = encode(columns);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "asteroidOrbitalData_columnar.msgpack";
-    a.click();
-    URL.revokeObjectURL(url);
+fs.writeFileSync(msgpackFilePath, buffer);
 
-    console.log("Columnar Msgpack file written successfully!");
-  })
-  .catch((err) => {
-    console.error("Error reading CSV file:", err);
-  });
+console.log("Msgpack file written successfully!");
