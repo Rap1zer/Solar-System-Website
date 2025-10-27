@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Lights, Asteroids, Sun } from "./SceneSubjects";
+import { Asteroids, Sun } from "./SceneSubjects";
 import Stats from 'stats.js';
 
 function SceneManager(canvas) {
@@ -31,13 +31,20 @@ function SceneManager(canvas) {
     const nearPlane = 0.1;
     const farPlane = 7000;
     const camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
-    camera.position.set(0, 0, 30);
+    camera.position.set(0, -20, 240);
+    camera.up.set(0, 0, 1);
+    camera.lookAt(0, 0, 0);
     return camera;
   }
 
   function buildOrbitControls() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
+    controls.minPolarAngle = THREE.MathUtils.degToRad(5);
+    controls.maxPolarAngle = THREE.MathUtils.degToRad(175);
+    controls.object.up.set(0, 0, 1);
     return controls;
   }
 
