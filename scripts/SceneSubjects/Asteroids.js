@@ -5,18 +5,21 @@ import fragmentShader from "../shaders/asteroidFrag.glsl";
 import { fetchAsteroidData } from "../fileReaders/fetchAsteroidData";
 import { coloursAsFloats } from "../orbitClass";
 
+export const ASTEROID_TIME_SCALE = 30;
+
 class Asteroids {
   points;
   geometry;
   material;
 
-  constructor(scene) {
+  constructor(scene, startJulianDay = 0) {
     this.geometry = new THREE.BufferGeometry();
     this.material = new THREE.ShaderMaterial({
-      uniforms: { 
-        time: { value: 0 }, 
-        au: { value: 30 }, 
-        orbitColors: { value: coloursAsFloats } 
+      uniforms: {
+        time: { value: 0 },
+        au: { value: 30 },
+        startDay: { value: startJulianDay },
+        orbitColors: { value: coloursAsFloats }
       },
       vertexShader,
       fragmentShader,
@@ -50,7 +53,7 @@ class Asteroids {
   }
 
   update(time) {
-    this.material.uniforms.time.value = time * 30;
+    this.material.uniforms.time.value = time * ASTEROID_TIME_SCALE;
   }
 }
 
