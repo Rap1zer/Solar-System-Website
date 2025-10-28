@@ -83,11 +83,9 @@ function SceneManager(canvas) {
         year: "numeric",
         month: "short",
         day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
       });
 
-      dateDisplay.textContent = `Simulated date: ${formattedDate}`;
+      dateDisplay.textContent = `${formattedDate}`;
     }
 
     for (let i = 0; i < sceneSubjects.length; i++) sceneSubjects[i].update(time);
