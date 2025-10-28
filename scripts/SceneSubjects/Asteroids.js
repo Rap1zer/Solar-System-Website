@@ -12,7 +12,7 @@ class Asteroids {
   constructor(scene) {
     this.geometry = new THREE.BufferGeometry();
     this.material = new THREE.ShaderMaterial({
-      uniforms: { time: { value: 0 } },
+      uniforms: { time: { value: 0 }, au: { value: 30 } },
       vertexShader,
       fragmentShader,
       glslVersion: THREE.GLSL3,
@@ -38,7 +38,7 @@ class Asteroids {
       });
 
       console.log(`Loaded ${numPoints} asteroids`);
-      console.log("First asteroid object attributes:", attributeArrays);
+      console.log("Asteroid attributes:", attributeArrays);
     } catch (err) {
       console.error("Failed to load asteroid data:", err);
     }

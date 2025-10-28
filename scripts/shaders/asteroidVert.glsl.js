@@ -2,6 +2,7 @@ export default /* glsl */ `
 precision highp float;
 
 uniform float time; // time passed where each second is a day
+uniform float au; // Astronomical unit scale factor
 
 // Attributes become 'in' variables
 in float M; // mean anomaly at epoch (radians)
@@ -12,12 +13,15 @@ in float i; // inclination (radians)
 in float om; // longitude of ascending node (Ω) (radians)
 in float w; // argument of perihelion (ω) (radians)
 in float epoch; // Reference epoch (Julian Date) of the mean anomaly and other orbital parameters
-in float diameter; // diameter
+in float diameter; // Diameter in km
+in float classId; // Orbit class ID
+
+out float vClassId;
 
 const float PI = 3.141592653589793;
 const float MIN_POINT_SCALE = 1.0;
 const float MAX_POINT_SCALE = 5.0;
-const float MAX_DIAMETER_KM = 940.0; // ~Ceres diameter, used for normalisation
+const float MAX_DIAMETER = 940.0; // ~Ceres diameter, used for normalisation
 
 // Newton-Raphson for eccentric anomaly
 float calculateEccentricAnomaly(float Mval, float eVal) {
@@ -39,8 +43,8 @@ float calculateEccentricAnomaly(float Mval, float eVal) {
 }
 
 void main() {
+    vClassId = classId;
     float startDay = 2460961.5;
-    float au = 30.0; // Astronomical unit scale factor
 
     // --- time & mean anomaly (time in days) ---
     float currentTime = startDay + time;
@@ -82,7 +86,7 @@ void main() {
 
     vec3 orbitalPos = vec3(X, Y, Z) * au;
 
-    float percentage = clamp(diameter / 940.0, 0.0, 1.0);
+    float percentage = clamp(diameter / MAX_DIAMETER, 0.0, 1.0);
     float powerCurve = pow(percentage, 0.4);
     float scale = mix(MIN_POINT_SCALE, MAX_POINT_SCALE, powerCurve); // linear interpolation
 

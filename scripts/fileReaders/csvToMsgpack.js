@@ -21,7 +21,7 @@ const lines = csv.split("\n");
 const headers = lines[0].split(",").map(h => h.trim().replace(/^"(.*)"$/, "$1"));
 
 // Columns we care about
-const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch", "diameter"];
+const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch", "diameter", "class"];
 
 // Initialize empty arrays for each column
 const columns = Object.fromEntries(wanted.map(name => [name, []]));
@@ -43,9 +43,9 @@ for (let row = 1; row < lines.length; row++) {
     const isNum = /^\d+(\.\d+)?$/.test(val);
     val = isNum ? parseFloat(val) : val;
 
-    // Convert certain columns from degrees → radians
-    if (["i", "om", "w", "M", "n"].includes(name) || [2,3,4,11,12].includes(colIdx)) {
-      if (!isNaN(val)) val = (val * Math.PI) / 180;
+    // Convert certain columns from degrees to radians
+    if (["i", "om", "w", "ma", "n"].includes(name)) {
+      if (typeof val === "number" && !isNaN(val)) val = (val * Math.PI) / 180;
     }
 
     columns[name].push(val);
