@@ -3,6 +3,7 @@ precision highp float;
 
 uniform float time; // time passed where each second is a day
 uniform float au; // Astronomical unit scale factor
+uniform float startDay; // Julian day the simulation starts from
 
 // Attributes become 'in' variables
 in float M; // mean anomaly at epoch (radians)
@@ -44,8 +45,6 @@ float calculateEccentricAnomaly(float Mval, float eVal) {
 
 void main() {
     vClassId = classId;
-    float startDay = 2460961.5;
-
     // --- time & mean anomaly (time in days) ---
     float currentTime = startDay + time;
     float meanAnom = mod(M + n * (currentTime - epoch), 2.0 * PI);

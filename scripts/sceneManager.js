@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Asteroids, Sun } from "./SceneSubjects";
+import { Asteroids, Sun, ASTEROID_TIME_SCALE } from "./SceneSubjects";
 import Stats from 'stats.js';
+import { addDays, dateToJulianDate } from "./utils/dateUtils";
 
 function SceneManager(canvas) {
   const screenDimensions = {
@@ -13,7 +14,11 @@ function SceneManager(canvas) {
   const renderer = buildRenderer(screenDimensions);
   const camera = buildCamera(screenDimensions);
   const controls = buildOrbitControls(camera, canvas);
-  const sceneSubjects = createSceneSubjects(scene);
+  const simulationStartDate = new Date();
+  const simulationStartJulianDate = dateToJulianDate(simulationStartDate);
+
+  const sceneSubjects = createSceneSubjects(scene, simulationStartJulianDate);
+  const dateDisplay = document.getElementById("date-display");
   // buildHelpers(scene);
 
   function buildRenderer({ width, height }) {
@@ -53,8 +58,8 @@ function SceneManager(canvas) {
     scene.add(gridHelper);
   }
 
-  function createSceneSubjects(scene) {
-    const sceneSubjects = [new Asteroids(scene), new Sun(scene)];
+  function createSceneSubjects(scene, startJulianDate) {
+    const sceneSubjects = [new Asteroids(scene, startJulianDate), new Sun(scene)];
 
     return sceneSubjects;
   }
@@ -70,6 +75,21 @@ function SceneManager(canvas) {
     // stats.begin();
 
     const time = clock.getElapsedTime(); // time passed
+    const daysPassed = time * ASTEROID_TIME_SCALE;
+    const simulatedDate = addDays(simulationStartDate, daysPassed);
+
+    if (dateDisplay) {
+      const formattedDate = simulatedDate.toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      dateDisplay.textContent = `Simulated date: ${formattedDate}`;
+    }
+
     for (let i = 0; i < sceneSubjects.length; i++) sceneSubjects[i].update(time);
     controls.update();
     renderer.render(scene, camera);

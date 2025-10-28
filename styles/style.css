@@ -5,3 +5,17 @@ canvas {
   width: 100vw;
   height: 100vh;
 }
+
+#date-display {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  padding: 0.5rem 0.75rem;
+  color: #ffffff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 0.5rem;
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
