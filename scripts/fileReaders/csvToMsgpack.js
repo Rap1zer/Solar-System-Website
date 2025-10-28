@@ -21,7 +21,7 @@ const lines = csv.split("\n");
 const headers = lines[0].split(",").map(h => h.trim().replace(/^"(.*)"$/, "$1"));
 
 // Columns we care about
-const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch"];
+const wanted = ["a", "e", "i", "om", "w", "ma", "n", "epoch", "diameter"];
 
 // Initialize empty arrays for each column
 const columns = Object.fromEntries(wanted.map(name => [name, []]));

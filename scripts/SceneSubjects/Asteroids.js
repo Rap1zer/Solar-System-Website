@@ -37,7 +37,7 @@ class Asteroids {
         this.geometry.setAttribute(name, new THREE.BufferAttribute(array, 1));
       });
 
-      console.log(`✅ Loaded ${numPoints} asteroids`);
+      console.log(`Loaded ${numPoints} asteroids`);
       console.log("First asteroid object attributes:", attributeArrays);
     } catch (err) {
       console.error("Failed to load asteroid data:", err);

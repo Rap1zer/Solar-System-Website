@@ -12,8 +12,12 @@ in float i; // inclination (radians)
 in float om; // longitude of ascending node (Ω) (radians)
 in float w; // argument of perihelion (ω) (radians)
 in float epoch; // Reference epoch (Julian Date) of the mean anomaly and other orbital parameters
+in float diameter; // diameter
 
 const float PI = 3.141592653589793;
+const float MIN_POINT_SCALE = 1.0;
+const float MAX_POINT_SCALE = 5.0;
+const float MAX_DIAMETER_KM = 940.0; // ~Ceres diameter, used for normalisation
 
 // Newton-Raphson for eccentric anomaly
 float calculateEccentricAnomaly(float Mval, float eVal) {
@@ -36,7 +40,7 @@ float calculateEccentricAnomaly(float Mval, float eVal) {
 
 void main() {
     float startDay = 2460961.5;
-    float scale = 30.0;
+    float au = 30.0; // Astronomical unit scale factor
 
     // --- time & mean anomaly (time in days) ---
     float currentTime = startDay + time;
@@ -76,9 +80,13 @@ void main() {
     float Y = r * (sinO * cos_wpv + cosO * sin_wpv * cosi);
     float Z = r * (sin_wpv * sini);
 
-    vec3 orbitalPos = vec3(X, Y, Z) * scale;
+    vec3 orbitalPos = vec3(X, Y, Z) * au;
 
-    gl_PointSize = 1.0;
+    float percentage = clamp(diameter / 940.0, 0.0, 1.0);
+    float powerCurve = pow(percentage, 0.4);
+    float scale = mix(MIN_POINT_SCALE, MAX_POINT_SCALE, powerCurve); // linear interpolation
+
+    gl_PointSize = scale;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(orbitalPos, 1.0);
 }
 `;
