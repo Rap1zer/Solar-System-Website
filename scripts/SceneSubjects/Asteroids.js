@@ -3,6 +3,7 @@ import * as THREE from "three";
 import vertexShader from "../shaders/asteroidVert.glsl";
 import fragmentShader from "../shaders/asteroidFrag.glsl";
 import { fetchAsteroidData } from "../fileReaders/fetchAsteroidData";
+import { coloursAsFloats } from "../orbitClass";
 
 class Asteroids {
   points;
@@ -12,7 +13,11 @@ class Asteroids {
   constructor(scene) {
     this.geometry = new THREE.BufferGeometry();
     this.material = new THREE.ShaderMaterial({
-      uniforms: { time: { value: 0 }, au: { value: 30 } },
+      uniforms: { 
+        time: { value: 0 }, 
+        au: { value: 30 }, 
+        orbitColors: { value: coloursAsFloats } 
+      },
       vertexShader,
       fragmentShader,
       glslVersion: THREE.GLSL3,

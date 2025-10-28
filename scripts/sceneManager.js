@@ -62,19 +62,19 @@ function SceneManager(canvas) {
   const clock = new THREE.Clock();
   clock.start();
 
-  const stats = new Stats();
-  stats.showPanel(0); // fps
-  document.body.appendChild(stats.dom);
+  // const stats = new Stats();
+  // stats.showPanel(0); // fps
+  // document.body.appendChild(stats.dom);
 
   this.update = function () {
-    stats.begin();
+    // stats.begin();
 
     const time = clock.getElapsedTime(); // time passed
     for (let i = 0; i < sceneSubjects.length; i++) sceneSubjects[i].update(time);
     controls.update();
     renderer.render(scene, camera);
 
-    stats.end();
+    // stats.end();
   };
 }
 

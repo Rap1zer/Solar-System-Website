@@ -19,8 +19,8 @@ in float classId; // Orbit class ID
 out float vClassId;
 
 const float PI = 3.141592653589793;
-const float MIN_POINT_SCALE = 1.0;
-const float MAX_POINT_SCALE = 5.0;
+const float MIN_POINT_SCALE = 2.0;
+const float MAX_POINT_SCALE = 6.0;
 const float MAX_DIAMETER = 940.0; // ~Ceres diameter, used for normalisation
 
 // Newton-Raphson for eccentric anomaly
